@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Mind Map</title>
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/print.css" rel="stylesheet" media="print">
+    <!-- <link href="style.css" rel="stylesheet"> -->
+
+
+	
+	<script src="mind.js"></script>
+    <script src="custom.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.5.2/firebase-auth.js"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css" />
+
+	</style>
+
+    <style>
+        .btn-xs {
+            font-size: 14px !important;
+            border: 1px solid lightblue;
+        }
+    </style>
+</head>
+<body>
+
+	
+
+
+
+
+
+	<ul id="port">
+		<div id="tip">
+			<div id="showChildMaps" class="tab">
+				<span id="loadChildsId">
+	
+				</span>
+					<button data-command="NewChildMap" id="newChildMapId" title="New" parentId="" class="tablinks  btn btn-default btn-xs">+</button>
+			</div>
+		</div>
+	</ul>
+	
+	<div id="right-side-bar" style="display:none" class="ui">
+		<h3>
+			<script>CONST_APP_NAME</script>
+		</h3>
+		<p>
+				<button data-command="New" style="margin-top:10px" class="" title="New">New </button>
+				<button data-command="Save" style="margin-top:10px" class="" title="Save">Save</button>
+				<button style="margin-top:10px" onClick="DeleteMap()" class="">Delete</button>
+				<button style="margin-top:7px">
+					<a href="" style="color:inherit" class="">Go To My Maps List</a>
+				</button>
+	
+		</p>
+	
+		<p>
+			<span>Layout</span>
+			<select id="layout">
+				<option value="">(Inherit)</option>
+			</select>
+		</p>
+		<p style="display:none">
+			<span>Shape</span>
+			<select id="shape">
+				<option value="">(Automatic)</option>
+			</select>
+		</p>
+		<p>
+			<span>Value</span>
+			<select id="value">
+				<option value="">(None)</option>
+				<option value="num">Number</option>
+				<optgroup label="Formula">
+					<option value="sum">Sum</option>
+					<option value="avg">Average</option>
+					<option value="min">Minimum</option>
+					<option value="max">Maximum</option>
+				</optgroup>
+			</select>
+		</p>
+		<p>
+			<span>Status</span>
+			<select id="status" size="3">
+				<option value="">None</option>
+				<option value="yes">Yes</option>
+				<option value="no">No</option>
+			</select>
+		</p>
+		<p style="display:none">
+			<span>Color</span>
+			<span id="color">
+				<a data-color="" title="Inherit" href="#"></a>
+				<a data-color="#e33" title="Red" href="#"></a>
+				<a data-color="#3e3" title="Light Green" href="#"></a>
+				<a data-color="#080" title="Green" href="#"></a>
+				<a data-color="#33e" title="Blue" href="#"></a>
+				<a data-color="#dd3" title="Yellow" href="#"></a>
+				<a data-color="#3dd" title="Cyan" href="#"></a>
+				<a data-color="#d3d" title="Magenta" href="#"></a>
+				<a data-color="#fa3" title="Orange" href="#"></a>
+			</span>
+		</p>
+		<p>
+			<span>Color</span>
+			<span id="textColor">
+				<a data-color="" title="Inherit" href="#"></a>
+				<a data-color="#e33" title="Red" href="#"></a>
+				<a data-color="#3e3" title="Light Green" href="#"></a>
+				<a data-color="#080" title="Green" href="#"></a>
+				<a data-color="#33e" title="Blue" href="#"></a>
+				<a data-color="#dd3" title="Yellow" href="#"></a>
+				<a data-color="#3dd" title="Cyan" href="#"></a>
+				<a data-color="#d3d" title="Magenta" href="#"></a>
+				<a data-color="#fa3" title="Orange" href="#"></a>
+			</span>
+		</p>
+	
+		<p>
+			<span>Icons</span>
+			<select id="icons" class="fa-select" size="7">
+				<option value=''>None</option>
+	
+				<option value='fa-exclamation-circle'>&#xf06a; exclamation</option>
+				<option value='fa-question-circle-o'>&#xf29c; question</option>
+				<option value='fa-plus-circle'>&#xf055; plus</option>
+	
+				<option value='fa-hand-o-right'>&#xf0a4; hand right</option>
+				<option value='fa-thumbs-o-down'>&#xf088; thumbs down</option>
+				<option value='fa-thumbs-o-up'>&#xf087; thumbs up</option>
+	
+				<option value='fa-bullhorn'>&#xf0a1; bullhorn</option>
+				<option value='fa-ban'>&#xf05e; ban</option>
+	
+				<option value='fa-fa'>&#xf2b4; flag</option>
+	
+				<option value='fa-refresh'>&#xf021; refresh</option>
+	
+				<option value='fa-arrow-circle-down'>
+					&#xf0ab; arrow down
+				</option>
+				<option value='fa-arrow-circle-left'>&#xf0a8; arrow left</option>
+				<option value='fa-arrow-circle-right'>&#xf0a9; arrow right</option>
+				<option value='fa-arrow-circle-up'>&#xf0aa; arrow up</option>
+				<option value='fa-bell-o'>&#xf0a2; bell on</option>
+				<option value='fa-bell-slash-o'>&#xf1f7; bell off</option>
+	
+				<option value='fa-bug'>&#xf188; bug</option>
+	
+				<option value='fa-calendar'>&#xf073; calendar</option>
+				<option value='fa-calendar-check-o'>&#xf274; calendar tick</option>
+				<option value='fa-calendar-times-o'>&#xf273; calendar cross</option>
+				<option value='fa-camera'>&#xf030; camera</option>
+	
+				<option value='fa-bookmark-o'>&#xf097; bookmark</option>
+	
+				<option value='fa-chain'>&#xf0c1; chain</option>
+	
+				<option value='fa-envelope-o'>&#xf003; envelope</option>
+	
+	
+				<option value='fa-expeditedssl'>&#xf23e; locked</option>
+	
+	
+				<option value='fa-gift'>&#xf06b; gift</option>
+	
+				<option value='fa-graduation-cap'>&#xf19d; graduation cap</option>
+	
+				<option value='fa-heart-o'>&#xf08a; heart</option>
+	
+				<option value='fa-hourglass-o'>&#xf250; hourglass</option>
+	
+				<option value='fa-male'>&#xf183; male</option>
+				<option value='fa-female'>&#xf182; female</option>
+				<option value='fa-child'>&#xf1ae; child</option>
+	
+				<option value='fa-repeat'>&#xf01e; repeat</option>
+	
+	
+				<option value='fa-adjust'>&#xf042; adjust</option>
+				<option value='fa-area-chart'>&#xf1fe; area-chart</option>
+			</select>
+		</p>
+		<p>
+			<button data-command="Help" title="Help">See Keyboard shortcuts</button>
+		</p>
+		<button id="toggle" title="Toggle UI"></button>
+	
+		<button class="btn btn-default btn-xs" data-command="Notes" title="Notes"><i class="fa fa-commenting-o"></i> Note</button>
+		<button class="btn btn-default btn-xs" data-command="Edit"><i class="fa fa-pencil"></i> Edit</button>
+		<button class="btn btn-default btn-xs" data-command="Delete"><i class="fa fa-trash-o"></i> Delete</button>
+		<button class="btn btn-default btn-xs" data-command="InsertImage"><i class="fa fa-image"></i> Image</button>
+		<button class="btn btn-default btn-xs" data-command="InsertChild"><i class="fa fa-plus-circle"></i> Child</button>
+		<button class="btn btn-default btn-xs" data-command="InsertSibling"><i class="fa fa-plus-circle"></i> Sibling</button>
+	
+		<div id="throbber"></div>
+	</div>
+	
+	<style>
+		.btn-xs {
+			font-size: 14px !important;
+			border: 1px solid lightblue;
+		}
+	</style>
+	
+	<div id="io" class="ui" style="margin-top:58px;">
+		<!-- <h3></h3>
+		<p style="display:none">
+			<span>Storage</span>
+			<select id="backend"></select>
+		</p> -->
+		<h3></h3>
+		<p>
+			<label><span>Storage</span>
+			<select id="backend"></select></label>
+		</p>
+		<div id="file">
+			<p class="desc">Local files are suitable for loading/saving files from other mindmapping applications.</p>
+			<p data-for="save">
+				<span>Format</span>
+				<select class="format"></select>
+			</p>
+			<p data-for="save load">
+				<button class="go"></button><button class="cancel">Cancel</button>
+			</p>
+		</div>
+	
+		<div id="image">
+			<p class="desc">Export your design as a PNG image.</p>
+			<p data-for="save">
+				<button class="go"></button><button class="cancel">Cancel</button>
+			</p>
+		</div>
+	
+		<div id="local">
+			<p class="desc">Your browser's localStorage can handle many mind maps and creates a permalink, but this URL cannot be shared.</p>
+			<p data-for="load">
+				<span>Saved maps</span>
+				<select class="list"></select>
+			</p>
+			<p data-for="save load">
+				<button class="go"></button><button class="cancel">Cancel</button>
+			</p>
+			<p data-for="load">
+				<button class="remove">Delete</button>
+			</p>
+		</div>
+	
+		<div id="firebase">
+			<p>Are you sure you want to publish?</p>
+			<div>
+				<p class="desc">Firebase offers real-time synchronization for true multi-user collaboration.</p>
+				<p data-for="save load">
+					<span>Server</span>
+					<input type="text" class="server" />
+				</p>
+				<p data-for="save load">
+					<span>Auth</span>
+					<select class="auth">
+						<option value="">(None)</option>
+						<option value="facebook">Facebook</option>
+						<option value="twitter">Twitter</option>
+						<option value="github">GitHub</option>
+						<option value="google">Google</option>
+					</select>
+				</p>
+				<p data-for="load">
+					<span>Saved maps</span>
+					<select id="savedMapsList" class="list"></select>
+				</p>
+			</div>
+			<p data-for="save load">
+				<button id="save-new-map-btn" class="go"></button><button class="cancel">Cancel</button>
+			</p>
+			<p data-for="load">
+				<button class="remove">Delete</button>
+			</p>
+		</div>
+	
+		<div id="webdav">
+		   
+				<p class="desc">Your map will be save as draft. It will be visible to public once approved by admin</p>
+		   
+			<p style="display:none" data-for="save load">
+				<input type="hidden" class="url" />
+			</p>
+			<p data-for="save load">
+				<button class="go"></button><button class="cancel">Cancel</button>
+			</p>
+		</div>
+	
+		<div id="gdrive">
+			<p class="desc">Maps stored in Google Drive have a permalink URL and can be shared with other users, if you allow this by setting proper permissions (inside Google Drive itself).</p>
+			<p data-for="save">
+				<span>Format</span>
+				<select class="format"></select>
+			</p>
+			<p data-for="save load">
+				<button class="go"></button><button class="cancel">Cancel</button>
+			</p>
+		</div>
+	</div>
+	
+	<div id="help" class="ui" style="margin-top:58px;">
+		<h3>Help</h3>
+	
+		<p><span>Navigation</span></p>
+		<table class="navigation"></table>
+	
+		<p><span>Manipulation</span></p>
+		<table class="manipulation"></table>
+	
+		<p><span>Editing</span></p>
+		<table class="editing"></table>
+	
+		<p><span>Other</span></p>
+		<table class="other"></table>
+	</div>
+	<div id="notes" class="ui" style="margin-top:58px;">
+		<h3>Topic Notes</h3>
+		<iframe id="notes-editor" sandbox="allow-scripts allow-modals" src="editor.html"></iframe>
+	</div>
+	<input type="file" name="file" id="InsertImage" style="display:none"/>
+	<div id="menu" style="display:none">
+			<button data-command="Notes"></button>
+			<button data-command="InsertImage"></button>
+			<span></span>
+			<button data-command="InsertChild"></button>
+			<button data-command="InsertSibling"></button>
+			<button data-command="Delete"></button>
+			<span></span>
+	
+			<button data-command="Edit"></button>
+			<button data-command="Value"></button>
+			<span></span>
+			<button data-command="Undo"></button>
+			<button data-command="Redo"></button>
+		<button data-command="Center"></button>
+	</div>
+	<div id="blockToDisplayExistingMaps" type="text/html">
+	</div>
+	
+	<div class="wrapper wrapper-content">
+		<div class="row">
+			<div id="show-existing-maps-block" class="red"></div>
+		</div>
+	</div>
+	
+	<div id="map-block" style="display:none; background-color:white !important">
+		<script>
+			var isChangesSaved = true;
+	
+			function backClicked() {
+				MM.App.notes.close();
+				MM.App.help.close();
+			}
+	
+			//MM.Backend.Firebase.connect("learning-bb893", "");
+			window.onload = function () {
+				localStorage.setItem("mm.app.backend", "webdav");
+				//loadExistingMaps();
+				isReadOnly = false;
+				if (isReadOnly) {
+					toastr.warning("You cannot make changes to a read-only map");
+				}
+				MM.App.init(isReadOnly);
+				isNewMap = true;
+				MM.App.io.restore();
+				refreshShowHide();
+			   
+				//MM.Item.prototype.update();
+				$("#newChildMapId").attr("parentId", MM.App.map.getId()); //replace with parent map id
+				//document.getElementById("newChildMapId").
+				window.editor = { //for notes editor
+						postMessage: function(action, value) {
+							var iframeElm = document.getElementById('notes-editor');
+							iframeElm.contentWindow.postMessage({
+								action: action,
+								value: value
+							}, '*');
+						},
+						setContent: function(html) {
+							this.postMessage('setContent', html);
+						},
+						getContent: function() {
+							return this.postMessage('getContent');
+						}
+				};
+	
+				//open image in new tab on click
+				document.getElementById("port").addEventListener("click", function (e) {
+					if (e.target && e.target.className == "img") {
+						var w = window.open('about:blank');
+	
+						setTimeout(function () { //FireFox seems to require a setTimeout for this to work.
+							var frame = w.document.createElement('iframe');
+							frame.width = "100%"
+							frame.height = "100%"
+							w.document.body.appendChild(frame)
+								.src = e.target.src;
+						}, 0);
+	
+						//console.log("foo " + e.target.innerText + " was clicked!");
+					}
+				});
+	
+				//confirm before page leaving
+				window.onbeforeunload = function () {
+					this.backClicked();
+					if (!isChangesSaved)
+						return this.confirm("You may have unsaved changes, are you sure you want to leave?");
+				}
+				
+	
+			}
+			function refreshShowHide() {
+				loginUserId = 'loginUserId';
+				if (mapCreaterId != 'loginUserId') {
+					MM.App.isReadOnly = true;
+				   // MM.Keyboard.stopListening();
+					document.getElementById('right-side-bar').style.display = 'none';
+				 }
+				//else if (isReadOnly) {
+				//    MM.Keyboard.stopListening();
+				//    document.getElementById('right-side-bar').style.display = 'none';
+				// }
+				else {
+					MM.App.isReadOnly = false;
+					isReadOnly = false;
+					MM.Keyboard.init();
+					document.getElementById('right-side-bar').style.display = 'block';
+				}
+				if (isNewMap) { //if its new map
+					MM.App.isReadOnly = false;
+					MM.Keyboard.init();
+					document.getElementById('right-side-bar').style.display = 'block';
+				}
+			}
+		</script>
+		<script src="vendor/pell/src/pell.min.js"></script> 
+	</div>
+
+
+
+
+
+
+
+
+  <script src="vendor/pell/src/pell.min.js"></script>
+</body>
+</html>

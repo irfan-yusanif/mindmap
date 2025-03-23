@@ -1,0 +1,159 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1.0" />
+    <title></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pell/1.0.6/pell.css" integrity="sha512-bYBGCuuIC2KMlDaVPvYlSfyq3l0p/daFlDl5IjCUO25ZffYJme1R10C1cGeV3HgKmuwgSMBh7H1l0Hh3smsAOA==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pell/1.0.6/pell.js" integrity="sha512-klR1rCAXTiHFiNHOD3HFUE1wn4m0k4hfxardmrUGMUL6ykbNOPGjFYDDTIQIWoEm0exe12YJY9Nsgo73lRLSKA==" crossorigin="anonymous"></script>
+    <!--<link rel="stylesheet" type="text/css" href="https://unpkg.com/pell/dist/pell.min.css">-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <style>
+        body {
+            margin: 0px !important;
+            padding: 0;
+        }
+
+        .pell-button:last-child {
+            background: green;
+            color: white;
+            padding-right: 40px;
+            border-radius: 20px
+        }
+
+       /* .pell-content {
+            height:auto;
+        }*/
+
+    </style>
+</head>
+<body>
+    <div id="notes-content"></div>
+    <div>
+        <!--<button class="btn btn-primary"
+                         style="
+            margin-top: -327px;
+            float: right;
+            background-color: rgb(43, 217, 217);
+            border: none;
+            margin-right:5px;
+            padding: 5px;
+            padding-top: 4px;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+        "
+                         onclick="sendMessage('closeEditor', true);">x</button>-->
+    </div>
+   
+    <script>
+        
+
+        var sendMessage = function(action, value) {
+            window.parent.postMessage({
+                action: action,
+                value: value
+            }, '*');
+        };
+
+        window.addEventListener("message", function(e) {
+            if (e.data && e.data.action) {
+                switch (e.data.action) {
+                    case "setContent":
+                        window.editor.content.innerHTML = e.data.value;
+                        break;
+
+                    case "getContent":
+                        sendMessage('setContent', window.editor.content.innerHTML);
+                        break;
+                }
+            }
+        }, false);
+
+        window.onload = function() {
+       
+            window.editor = window.pell.init({
+                element: document.getElementById('notes-content'),
+                onChange: function(html) {
+                    sendMessage('setContent', html);
+                },
+                defaultParagraphSeparator: 'div',
+                styleWithCSS: false,
+                actions: [
+                    'bold',
+                    'italic',
+                    'underline',
+                    'strikethrough',
+                    'heading1',
+                    'heading2',
+                    'paragraph',
+                    'quote',
+                    'olist',
+                    'ulist',
+                    'code',
+                    'line',
+                    {
+                        name: 'link',
+                        result: function() {
+                            const url = window.prompt('Enter the link URL');
+                            if (url) {
+                                window.pell.exec('createLink', url);
+                            }
+                        }
+                    },
+                    {
+                        name: 'undo',
+                        icon: '<b>&#8630;</b>',
+                        title: 'Undo',
+                        result: function () {
+                            document.execCommand("undo", null, null);
+                        }
+                    },
+                    {
+                        name: 'close',
+                        icon: 'Close',
+                        title: 'Close Notes',
+                        result: function() {
+                            sendMessage('closeEditor', true);
+                        }
+                    }
+                ],
+                classes: {
+                    actionbar: 'pell-actionbar',
+                    button: 'pell-button',
+                    content: 'pell-content',
+                    selected: 'pell-button-selected'
+                }
+            })
+            var height = document.documentElement.clientHeight;//$(window).height(); //this.scrollHeight
+            $('.pell-content').each(function () {
+                this.setAttribute('style', 'height:' + (height - 110) + 'px;overflow-y:scroll;');
+            }).on('input', function () {
+                this.style.height = 'auto';
+                this.style.height = (height - 110) + 'px';
+            });
+
+            if (height < 600) { //mobile screen height
+                var android_spacer = $('<div/>', {
+                    'class': 'android_spacer'
+                }).css({
+                    'width': '100%',
+                    'height': '200px'
+                }).appendTo($('#notes-content'));
+
+                $('.pell-content').on('focus', function () {
+                    $(this).after(android_spacer);
+                });
+
+                $('.pell-content').on('blur', function () {
+                    $('.android_spacer').remove();
+                });
+            }
+            
+        }
+
+        
+    </script>
+    <!--<script src="https://unpkg.com/pell"></script>-->
+</body>
+</html>
